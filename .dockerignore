@@ -1,0 +1,29 @@
+# Git files
+.git/
+.gitignore
+
+# Documentation
+*.md
+docs/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# GitHub workflows (not needed in image)
+.github/
+
+# Scripts (not needed in data image)
+scripts/
