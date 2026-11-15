@@ -15,3 +15,5 @@ One file per month, same names as the original: `temperature_anomaly_YYYY_MM.npy
     t[174, 746]                                      # Lausanne, July 2024 (about +2.6 C)
 
 Check: the global (area-weighted) mean is about -0.2 C in 1880, +1.0 C in 2020, +1.2 C in 2025.
+
+> AI assistance: Google Gemini and Anthropic Claude helped with research, data analysis, coding and debugging, and writing for extracting and regridding this dataset. See [AI assistance](../../README.md#ai-assistance).
