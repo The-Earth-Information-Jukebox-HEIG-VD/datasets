@@ -4,17 +4,22 @@ Pre-processed NASA Earth data for the sonification backend.
 
 ## Data Format
 
-`data/` holds one subfolder per dataset. Each file is a NumPy `.npy` array (no `.npz` or `.json`), one file per month (per year for night lights). All maps are 720 x 1440 (0.25 degree pixels).
+`data/` holds one subfolder per dataset. Each file is a NumPy `.npy` array (no `.npz` or `.json`), one file per month (per year for night lights). All maps are 720 x 1440 (0.25 degree pixels), except the rain belt (one value per latitude row). `data/` is about 9.1 GB (`du -sh data`).
 
 | Folder | Period (first - last file) | File pattern | Shape / dtype |
 |---|---|---|---|
+| `carbon_monoxide_2000_2024/` | 2000-04 - 2024-10 (275 files, 20 months missing at the source) | `co_YYYY_MM.npy` | 720 x 1440, float16 |
+| `chlorophyll_2002_2026/` | 2002-07 - 2026-10 (292 files) | `chlorophyll_YYYY_MM.npy` | 720 x 1440, float16 |
 | `co2_2002_2022/` | 2002-09 - 2022-03 (235 files) | `co2_YYYY_MM.npy` | 720 x 1440, float32 |
 | `fires_2002_2026/` | 2002-07 - 2026-11 (293 files) | `fires_YYYY_MM.npy` | 720 x 1440, float16 |
 | `lightning_2017_2023/` | 2017-03 - 2023-07 (77 files) | `lightning_YYYY_MM.npy` | 720 x 1440, float16 |
 | `nightlights_2012_2023/` | 2012 - 2023 (12 files, one per year) | `nightlights_YYYY.npy` | 720 x 1440, float32 |
 | `precipitation_rain_2000_2026/` | 2000-06 - 2026-11 (318 files) | `rain_YYYY_MM.npy` | 720 x 1440, float16 |
 | `precipitation_snow_2000_2026/` | 2000-06 - 2026-11 (318 files) | `snow_YYYY_MM.npy` | 720 x 1440, float16 |
+| `rain_belt_2000_2026/` | 2000-06 - 2026-11 (318 files) | `rain_belt_YYYY_MM.npy` | 720, float32 (one value per latitude row) |
+| `sea_ice_1979_2026/` | 1979-01 - 2026-10 (572 files, no 1987-12 and 1988-01) | `sea_ice_YYYY_MM.npy` | 720 x 1440, float16 |
 | `temperature_anomaly_1880_2025/` | 1880-01 - 2025-12 (1752 files) | `temperature_anomaly_YYYY_MM.npy` | 720 x 1440, float16 |
+| `vegetation_ndvi_2000_2026/` | 2000-03 - 2026-10 (320 files) | `ndvi_YYYY_MM.npy` | 720 x 1440, float16 |
 
 Shape and dtype were read from the first and last file of each folder. Only `temperature_anomaly_1880_2025/` has its own `README.md` (grid orientation, how to index a place).
 
@@ -51,9 +56,14 @@ Data is derived from NASA sources:
 - ISS LIS - lightning
 - NASA SVS 5276 - Earth at Night (night lights)
 - CO2 maps processed by the team
+- NSIDC Sea Ice Index - sea ice concentration, % of each cell (land = NaN)
+- MODIS Terra - vegetation index NDVI, -0.2 to 1 (ocean = NaN)
+- MOPITT on Terra - carbon monoxide total column, x10^18 molecules/cm2 (months missing at NASA have no file)
+- MODIS Aqua - ocean chlorophyll-a, monthly geometric mean in mg/m3 (land and clouds = NaN)
+- Rain belt: zonal mean of rain + snow per latitude, derived from the GPM IMERG files (not used by the app)
 
 See the `data_processing` repository for some of the processing scripts (`nightlights/`, `temperature_anomaly/`, `precipitation/`, `common_grid/`).
 
 ## CI
 
-`.github/workflows/docker-publish.yml` builds and pushes the image to GitHub Container Registry (`ghcr.io`) **only when a `v*` tag is pushed** (e.g. `v1.0.0`). Image tags: `1.0.0`, `1.0` and `latest`. Because `data/` is about 6.3 GB, the workflow first frees runner disk space (removes preinstalled SDKs such as .NET and Android, prunes Docker images) and deletes `.git` (a ~1.3 GB pack the image does not use) before building with Buildx.
+`.github/workflows/docker-publish.yml` builds and pushes the image to GitHub Container Registry (`ghcr.io`) **only when a `v*` tag is pushed** (e.g. `v1.0.0`). Image tags: `1.0.0`, `1.0` and `latest`. Because `data/` is about 9 GB, the workflow first frees runner disk space (removes preinstalled SDKs such as .NET and Android, prunes Docker images) and deletes `.git` (a ~1.3 GB pack the image does not use) before building with Buildx.

@@ -20,7 +20,7 @@ jobs:
       packages: write
 
     steps:
-      # data/ is ~6.3 GB: the checkout plus the build context copy need far
+      # data/ is ~9.1 GB: the checkout plus the build context copy need far
       # more than the ~14 GB a standard runner has free. Remove preinstalled
       # SDKs this image never uses (frees ~25 GB).
       - name: Free disk space
